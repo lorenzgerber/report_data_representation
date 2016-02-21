@@ -21,7 +21,7 @@
 \coursecode{DV160HT15}
 \title{OU4 Data Representation}
 \author{Lorenz Gerber ({\tt{dv15lgr@cs.umu.se}})} 
-\date{2016-02-18}
+\date{2016-03-03}
 %\revisiondate{2016-01-18}
 \instructor{Lena Kallin Westin / Johan Eliasson / Emil Marklund / Lina
 Ögren}
@@ -57,10 +57,64 @@
 \newpage
 
 \section{Introduction} 
-The aim with this laboration was to...
+In this assignment the aim was to specify three different possible
+data representations for a spreadsheet application. The
+representations were to be described such that they could be implemented
+from the descriptions.
+ 
+Several criteria to judge the suitability of the chosen representations were 
+discussed in the mandatory seminar \emph{OU2}. Three of those criteria 
+were then to be used to judge the chosen data representations.
+
+\subsection{Problem Description}
+Below is a translation of the the problem description given in Swedish
+on the course homepage:
+
+\begin{quote}
+Imagine that you work with the development of a spreadsheet software
+(Excel). The spreadsheet is basically a single large table with rows
+and columns. Each cell has a unique address in the form of a row and a
+column coordinate. For simplicity, let's represent both of them as an
+integer (normally columns are represented by character combinations,
+but the transformation to and from is trivial). The table is basically 
+of infinite size and the user fills in just some cells here and
+there. Obviously, it's not possible to represent all cells as they are
+of infinite count. Neither is it very economic to to represent the
+finit number of cells that fit in the thought minimum rectangle
+that includes all non-empty cells as still many included cells can be
+empty. The aim is to find a more economic representation of the
+spreadsheet. There are potentially many different viable
+representations. The assignment is to come up with three different
+representations for a spreadsheet and discuss pros and cons for each
+of them. However the first step is to determine suitable such criteria
+for evaluating the represantation.
+\end{quote}
+
+I chose to structure the report according a scientific article
+with \emph{Introduction}, \emph{Material and Methods}, \emph{Results},
+\emph{Discussion} and \emph{References}. 
+
+\subsection{The Anatomy of a Spreadsheet}
+A spreadsheet can be described as a matrix, two-dimensional array or a
+table with polytypic elements: Each element allowa storage of various
+simple data types. 
+
+\subsection{Typical Usecases of a Spreadsheet}
+During a typical user session, text, numbers,
+formulas and links to other elements are stored in the table/array
+elements. In many usecases the array 
+
+
+\subsection{Fast and Large or Slow and Small}
+The most general criteria applicable for in most cases of data
+structures are \emph{Time} and \emph{Space}. Most design choices come
+down to a trade-off between how execution speed and amount of needed
+memory. 
+
+
 
 \section{Material and Methods}
-We used method bla bla bla...
+DAG, directed acyclic graph. 
 
 \section{Results}
 And our results looked like this...
