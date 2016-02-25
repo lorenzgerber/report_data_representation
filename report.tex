@@ -66,8 +66,7 @@ Several criteria to judge the suitability of the chosen representations were
 discussed in the mandatory seminar \emph{OU2}. Three of those criteria 
 were then to be used to judge the chosen data representations.
 
-\subsection{Problem Description}
-Below is a translation of the the problem description given in Swedish
+Below follows a translation of the the problem description given in Swedish
 on the course homepage:
 
 \begin{quote}
@@ -90,19 +89,22 @@ of them. However the first step is to determine suitable such criteria
 for evaluating the represantation.
 \end{quote}
 
-I chose to structure the report according a scientific article
-with \emph{Introduction}, \emph{Material and Methods}, \emph{Results},
-\emph{Discussion} and \emph{References}. 
 
-\subsection{The Anatomy of a Spreadsheet}
-A spreadsheet can be described as a matrix, two-dimensional array or a
-table with polytypic elements: Each element allowa storage of various
-simple data types. 
+\subsection{Interpretation of the Problem Descrition}
+The quoted text defines a spreadsheet as a 'table'. Hence,
+a spreadsheet can be seen seen as a potentially infinite table. A
+requirement given in the description is that the implementation has to
+be more economic than an virtual rectangular structure engufling all
+non-empty table elements.
 
 \subsection{Typical Usecases of a Spreadsheet}
-During a typical user session, text, numbers,
-formulas and links to other elements are stored in the table/array
-elements. In many usecases the array 
+During a typical user session, text, numbers, formulas and links to
+other elements are stored in the table elements. In many usecases the
+number of filled elements will be very low compared to the
+rectanglular set of elements that engulfs the outermost non-empty
+table elements. This relation will be further on called \emph{fill
+  ratio}.
+
 
 
 \subsection{Fast and Large or Slow and Small}
@@ -111,6 +113,21 @@ structures are \emph{Time} and \emph{Space}. Most design choices come
 down to a trade-off between how execution speed and amount of needed
 memory. 
 
+
+\subsection{Chosen Datatypes}
+\subsubsection{table}
+As most obvious datatype table was chose. More specific, the
+construction of the table has to be such that it can grow
+and shrink dynamically. This was true for a table constructed from a
+list. 
+
+\subsubsection{Binary trees}
+Binary search trees offer a good time complexity. A table can be
+implemented as one tree for the rows and multiple trees for the
+columns in each row. 
+
+\subsubsection{Directed Graph and Hash Table}
+Nodes are 
 
 
 \section{Material and Methods}
