@@ -64,74 +64,133 @@ from the descriptions.
  
 Several criteria to judge the suitability of the chosen representations were 
 discussed in the mandatory seminar \emph{OU2}. Three of those criteria 
-were then to be used to judge the chosen data representations.
+were then applied to judge the chosen data representations.
 
-Below follows a translation of the the problem description given in Swedish
-on the course homepage:
 
-\begin{quote}
-Imagine that you work with the development of a spreadsheet software
-(Excel). The spreadsheet is basically a single large table with rows
-and columns. Each cell has a unique address in the form of a row and a
-column coordinate. For simplicity, let's represent both of them as an
-integer (normally columns are represented by character combinations,
-but the transformation to and from is trivial). The table is basically 
-of infinite size and the user fills in just some cells here and
-there. Obviously, it's not possible to represent all cells as they are
-of infinite count. Neither is it very economic to to represent the
-finit number of cells that fit in the thought minimum rectangle
-that includes all non-empty cells as still many included cells can be
-empty. The aim is to find a more economic representation of the
-spreadsheet. There are potentially many different viable
-representations. The assignment is to come up with three different
-representations for a spreadsheet and discuss pros and cons for each
-of them. However the first step is to determine suitable such criteria
-for evaluating the represantation.
-\end{quote}
+%   \begin{quote}
+% Imagine that you work with the development of a spreadsheet software
+% (Excel). The spreadsheet is basically a single large table with rows
+% and columns. Each cell has a unique address in the form of a row and a
+% column coordinate. For simplicity, let's represent both of them as an
+% integer (normally columns are represented by character combinations,
+% but the transformation to and from is trivial). The table is basically 
+% of infinite size and the user fills in just some cells here and
+% there. Obviously, it's not possible to represent all cells as they are
+% of infinite count. Neither is it very economic to to represent the
+% finit number of cells that fit in the thought minimum rectangle
+% that includes all non-empty cells as still many included cells can be
+% empty. The aim is to find a more economic representation of the
+% spreadsheet. There are potentially many different viable
+% representations. The assignment is to come up with three different
+% representations for a spreadsheet and discuss pros and cons for each
+% of them. However the first step is to determine suitable such criteria
+% for evaluating the represantation.
+%     \end{quote}
 
 
 \subsection{Interpretation of the Problem Descrition}
-The quoted text defines a spreadsheet as a 'table'. Hence,
-a spreadsheet can be seen seen as a potentially infinite table. A
-requirement given in the description is that the implementation has to
-be more economic than an virtual rectangular structure engufling all
-non-empty table elements.
+The problem description from the course homepage defines a spreadsheet
+as a 'table'. Hence, a spreadsheet can be seen seen as a potentially
+infinite table. A requirement given in the description is that the
+implementation shall be more economic than an plain rectangular
+structure covering all non-empty table elements.
 
 \subsection{Typical Usecases of a Spreadsheet}
-During a typical user session, text, numbers, formulas and links to
+During a user session, text, numbers, formulas and links to
 other elements are stored in the table elements. In many usecases the
-number of filled elements will be very low compared to the
-rectanglular set of elements that engulfs the outermost non-empty
-table elements. This relation will be further on called \emph{fill
-  ratio}.
+number of filled elements will be very low compared to the virtual
+rectanglular set of elements that surrounds the outermost non-empty
+table elements, hence the table is said to have a low \emph{fill
+ ratio}. This is the main reason why the potential data structure
+should only store non-empty elements.
+
+Another important property of a spreadsheet program is that the data
+structure is represented in the graphical user interface. Due to the
+size, there will usually just one part of the data be visible, hence
+blockwise value lookup for scrolling over the data table is a very
+common operation.
+
+Spreadsheets are often used to prepare sorted lists. Hence
+rearranging the order of whole rows or columns is another operation of
+high importance.
+
+When spreadsheets are used for calculation purposes, extensive linking
+between memeber elements of the spreadsheet is common. Links are
+either between two elements, much in the style of a pointer, but then
+can also be many elements to one cell, in the case of functions, such
+as calculating the sum of multiple cells.
 
 
 
-\subsection{Fast and Large or Slow and Small}
-The most general criteria applicable for in most cases of data
-structures are \emph{Time} and \emph{Space}. Most design choices come
-down to a trade-off between how execution speed and amount of needed
-memory. 
+
+\subsection{Chosen Criteria}
+\subsubsection{Time Complexity}
+The speed of specific operations is an important criteria. In some
+cases, it could decide whether a ceratin construction is feasible at
+or not. Whith `speed' I would define the processing time needed at a
+realistic use case size of the instance in question. Hence, sometimes
+a bad complexity can be accepted as the typical realworld instance
+size happens to be in a very narrow bandwith.
+If possible, also the time complexity of individual operations will be
+asessed.    
+
+The chosen operations of interest are given below:
+
+\begin{description}
+\item[Block Lookup] Get values for a block of cells. This operation
+  will usally be applied when the user scrolls or jumps to another
+  place in the spreadsheet. If row/column wise scrolling is assumed,
+  typicall lookup sizes would be around 10 to 50. 
+\item[Link following] Lookup of links as used in functions. 
+\item[Deletion] Deleting elements of the spreadsheet.
+\item[Traversal] Traversing the data structure to search for a value
+\end{description}
+
+\subsubsection{Ease of Implementation}
+During OU2 discussion, it was agreed that a lower complexity
+of the implementation is generally desirable as it decreases the
+susceptibility for bugs and code maintenance. Below are indicated some
+features/operations for which the ease of implementation will be
+judged and compared across the different table constructions.
+
+\begin{description}
+\item[Basic Structure] The data container as such
+\item[Sort] Sorting larger blocks of non-empty elements
+\end{description}
+
+\subsubsection{Memory efficency}
+It is understood from the problem definition that the used
+construction shall just store non-empty spreadsheet elements. Hence
+the judgement of memory efficency focuses on the amount of
+memory used for `administratiion' of the non-empty elements, such as
+hash tables and non value bearing data structure. 
 
 
 \subsection{Chosen Datatypes}
 \subsubsection{table}
-As most obvious datatype table was chose. More specific, the
+\emph{Table} was the most obvious choice. More specific, the
 construction of the table has to be such that it can grow
-and shrink dynamically. This was true for a table constructed from a
-list. 
+and shrink dynamically. This is true for a table constructed from a
+linked list. 
 
 \subsubsection{Binary trees}
 Binary search trees offer a good time complexity. A table can be
 implemented as one tree for the rows and multiple trees for the
 columns in each row. 
 
-\subsubsection{Directed Graph and Hash Table}
-Nodes are 
+\subsubsection{Directed Acyclic Graph and Hash Table}
+A directed graph is an n-linked structure. The nodes can be
+constructed as cells. The cells are created dynamically on demand. 
+Edges represent links in the spreadsheet. They are also created 
+dynamically. Direct access to individual nodes is achieved by a hash
+table. 
 
+ 
 
 \section{Material and Methods}
-DAG, directed acyclic graph. 
+\Subsection{Representation as Table}
+For the table implementation, the specifications given in Janlert (2000)
+\cite[p 124]{janlert2001} are suggested. 
 
 \section{Results}
 And our results looked like this...
