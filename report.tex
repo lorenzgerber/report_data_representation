@@ -60,40 +60,29 @@
 In this assignment the aim was to specify three different possible
 data representations for a spreadsheet application. The
 representations were to be described such that they could be implemented
-from the descriptions.
- 
-Several criteria to judge the suitability of the chosen representations were 
-discussed in the mandatory seminar \emph{OU2}. Three of those criteria 
-were then applied to judge the chosen data representations.
+from the descriptions. Several criteria to judge the suitability of
+the chosen representations were discussed in the mandatory seminar
+\emph{OU2}. Three of those criteria were then applied to judge the
+chosen data representations.
+
+It was chosen to structure the report into five parts: First an
+\emph{introduction} where the aim of the work is presented. Second, the
+\emph{interpretation of problem description} including also a short
+reference to the chosen data representations and criterias. Third
+comes an \emph{construction of the data types for each chosen data
+  representation}. Then the \emph{evaluation according the chosen
+  criteria}. And finally \emph{summarizing discussing} where also the
+decision for the most suitable data representation is revealed.
 
 
-%   \begin{quote}
-% Imagine that you work with the development of a spreadsheet software
-% (Excel). The spreadsheet is basically a single large table with rows
-% and columns. Each cell has a unique address in the form of a row and a
-% column coordinate. For simplicity, let's represent both of them as an
-% integer (normally columns are represented by character combinations,
-% but the transformation to and from is trivial). The table is basically 
-% of infinite size and the user fills in just some cells here and
-% there. Obviously, it's not possible to represent all cells as they are
-% of infinite count. Neither is it very economic to to represent the
-% finit number of cells that fit in the thought minimum rectangle
-% that includes all non-empty cells as still many included cells can be
-% empty. The aim is to find a more economic representation of the
-% spreadsheet. There are potentially many different viable
-% representations. The assignment is to come up with three different
-% representations for a spreadsheet and discuss pros and cons for each
-% of them. However the first step is to determine suitable such criteria
-% for evaluating the represantation.
-%     \end{quote}
-
-
-\subsection{Interpretation of the Problem Descrition}
+\section{Interpretation of the Problem Description}
 The problem description from the course homepage defines a spreadsheet
 as a 'table'. Hence, a spreadsheet can be seen seen as a potentially
 infinite table. A requirement given in the description is that the
 implementation shall be more economic than an plain rectangular
-structure covering all non-empty table elements.
+structure covering all non-empty table elements. From those
+descriptions it becomes obvious that a more concise description of
+problem is the \emph{efficient implementation of a sparse matrix}. 
 
 \subsection{Typical Usecases of a Spreadsheet}
 During a user session, text, numbers, formulas and links to
@@ -121,8 +110,6 @@ can also be many elements to one cell, in the case of functions, such
 as calculating the sum of multiple cells.
 
 
-
-
 \subsection{Chosen Criteria}
 \subsubsection{Time Complexity}
 The speed of specific operations is an important criteria. In some
@@ -136,15 +123,15 @@ asessed.
 
 The chosen operations of interest are given below:
 
-\begin{description}
-\item[Block Lookup] Get values for a block of cells. This operation
+\begin{itemize}
+\item Block Lookup - Get values for a block of cells. This operation
   will usally be applied when the user scrolls or jumps to another
   place in the spreadsheet. If row/column wise scrolling is assumed,
   typicall lookup sizes would be around 10 to 50. 
-\item[Link following] Lookup of links as used in functions. 
-\item[Deletion] Deleting elements of the spreadsheet.
-\item[Traversal] Traversing the data structure to search for a value
-\end{description}
+\item Link following - Lookup of links as used in functions. 
+\item Deletion - Deleting elements of the spreadsheet.
+\item Traversal - Traversing the data structure to search for a value
+\end{itemize}
 
 \subsubsection{Ease of Implementation}
 During OU2 discussion, it was agreed that a lower complexity
@@ -153,10 +140,10 @@ susceptibility for bugs and code maintenance. Below are indicated some
 features/operations for which the ease of implementation will be
 judged and compared across the different table constructions.
 
-\begin{description}
-\item[Basic Structure] The data container as such
-\item[Sort] Sorting larger blocks of non-empty elements
-\end{description}
+\begin{itemize}
+\item Basic Structure - The data container as such
+\item Sort - Sorting larger blocks of non-empty elements
+\end{itemize}
 
 \subsubsection{Memory efficency}
 It is understood from the problem definition that the used
@@ -167,37 +154,51 @@ hash tables and non value bearing data structure.
 
 
 \subsection{Chosen Datatypes}
-\subsubsection{table}
-\emph{Table} was the most obvious choice. More specific, the
-construction of the table has to be such that it can grow
-and shrink dynamically. This is true for a table constructed from a
-linked list. 
+The abstract datatypes that were chosen to be evaluated are:
+\begin{itemize}
+\item Array
+\item Binary Tree
+\item Directed Acyclic Graph
+\end{itemize}
 
-\subsubsection{Binary trees}
+
+
+\section{Construction of Datatypes}
+\subsection{Array}
+The abstract datatype \emph{array} ressembles the description of 
+how a spreadsheet is defined. However, when looking at the problem 
+description, it became obvious that the physical datatype array was 
+not suited as representation as an \emph{efficient representation of a
+ sparse matrix}. Janlert \cite[pp 101-103]{janlert2000} suggest in
+such a case to construct the array from a vector of tables. In C, the
+array is a physical datatype. Typical for the datatype array, it can
+not be resized during runtime. Hence this construction interpretes the
+requirement of a infinite large spreadsheet by chosing a large enough
+length for the row dimension. This seems however to be a rather
+accepted implementation: `Microsoft Excel', one of the arguably most
+popular spreadsheet applications has for example a row/column
+limitation of 1'048'576/16'384 \cite{excel_limit}. 
+
+\subsection{Binary trees}
 Binary search trees offer a good time complexity. A table can be
 implemented as one tree for the rows and multiple trees for the
 columns in each row. 
 
-\subsubsection{Directed Acyclic Graph and Hash Table}
+\subsection{Directed Acyclic Graph and Hash Table}
 A directed graph is an n-linked structure. The nodes can be
 constructed as cells. The cells are created dynamically on demand. 
 Edges represent links in the spreadsheet. They are also created 
-dynamically. Direct access to individual nodes is achieved by a hash
+dynamically. Direct access to individual nodes can be achieved by a hash
 table. 
 
  
 
-\section{Material and Methods}
-\Subsection{Representation as Table}
-For the table implementation, the specifications given in Janlert (2000)
-\cite[p 124]{janlert2001} are suggested. 
+\section{Evaluation of Data Representations}
 
-\section{Results}
-And our results looked like this...
 
 \section{Discussion}
+And our results looked like this...
 
-bla bla bla... 
 
 \addcontentsline{toc}{section}{\refname}
 \bibliography{references}
