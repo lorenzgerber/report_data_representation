@@ -65,17 +65,8 @@ the chosen representations were discussed in the mandatory seminar
 \emph{OU2}. Three of those criteria were then applied to judge the
 chosen data representations.
 
-It was chosen to structure the report into five parts: First an
-\emph{introduction} where the aim of the work is presented. Second, the
-\emph{interpretation of problem description} including also a short
-reference to the chosen data representations and criterias. Third
-comes an \emph{construction of the data types for each chosen data
-  representation}. Then the \emph{evaluation according the chosen
-  criteria}. And finally \emph{summarizing discussing} where also the
-decision for the most suitable data representation is revealed.
 
-
-\section{Interpretation of the Problem Description}
+\subsection{Interpretation of the Problem Description}
 The problem description from the course homepage defines a spreadsheet
 as a 'table'. Hence, a spreadsheet can be seen seen as a potentially
 infinite table. A requirement given in the description is that the
@@ -103,61 +94,84 @@ operation of importance. When spreadsheets are used for calculation
 purposes, extensive linking between memeber elements of the
 spreadsheet is common.
 
+In a normal spreadsheet, there are usually more rows than columns
+visible. This is just based on the simple fact that numbers and text
+extend horizontally on the screen. However, this will most likely
+influence how the user arranges data. Most likely, there will be more
+operations involving just a single columns compared to just a single
+row. If the data representation is asymetrical in terms of structure
+or operations, this should be kept in mind for the implementation. 
 
-\subsection{Chosen Criteria}
-\subsubsection{Time Complexity}
+\subsection{The datatype Spreadsheet}
+As a consequence of the above considerations the interface of the
+hypothetical datatype \textit{spreadsheet} can be described as following:
+
+\begin{verbatim}
+new() -> s
+isEmpty(s,xy) -> bool
+set(s,xy, v) -> s
+get(s,xy) -> v
+remove(s, xy) -> s
+\end{verbatim}
+
+The most significant difference to a standard array is that values can
+be empty and also removed. Further does \textit{spreadsheet} support
+storing user values of multiple datatypes in the same array. 
+
+
+
+
+\section{Chosen Criteria}
+\subsection{Time Complexity}
 The speed of specific operations is an important criteria. In some
 cases, it could decide whether a ceratin construction is feasible at
 or not. Whith `speed' I would define the processing time needed at a
 realistic use case size of the instance in question. Hence, sometimes
 a bad complexity can be accepted as the typical realworld instance
-size happens to be in a very narrow bandwith.
-If possible, also the time complexity of individual operations will be
-asessed.    
+size happens to be in a very narrow bandwith. If possible, also the
+time complexity of individual operations will be asessed.    
 
 The chosen operations of interest are given below:
 
 \begin{itemize}
 \item Block Lookup - Get values for a block of cells. This operation
   will usally be applied when the user scrolls or jumps to another
-  place in the spreadsheet. If row/column wise scrolling is assumed,
-  typicall lookup sizes would be around 10 to 50. 
+  place in the spreadsheet. Block lookup differs from a normal lookup
+  that both elements from both various rows and columns have to be
+  looked up. 
 \item Deletion - Deleting elements of the spreadsheet.
-\item Element Search - Traversing the data structure to search for a value
+\item Value Search - Traversing the data structure to search for a
+  user entered value in the spreadsheet elements. 
 \end{itemize}
 
-\subsubsection{Ease of Implementation}
+\subsection{Ease of Implementation}
 During OU2 discussion, it was agreed that a lower complexity
 of the implementation is generally desirable as it decreases the
-susceptibility for bugs and code maintenance. Below are indicated some
-features/operations for which the ease of implementation will be
-judged and compared across the different table constructions.
+susceptibility for bugs and code maintenance. How complex a certain
+datatype is to implement is not an objective measure. The presented
+evaluation is based on the limited experience of the author. 
 
-\begin{itemize}
-\item Basic Structure - The data container as such
-\item Sort - Sorting larger blocks of non-empty elements
-\end{itemize}
 
-\subsubsection{Memory efficency}
+
+
+\subsection{Memory efficency}
 It is understood from the problem definition that the used
-construction shall just store non-empty spreadsheet elements. Hence
+construction shall store just non-empty spreadsheet elements. Hence
 the judgement of memory efficency focuses on the amount of
-memory used for `administratiion' of the non-empty elements, such as
-hash tables and non value bearing data structure. 
+memory used for `administration' of the non-empty elements.
 
+\section{Chosen Datatypes}
+After a short literature study three datatypes were chosen to be
+evaluated in more depth.
 
-\subsection{Chosen Datatypes}
-The abstract datatypes that were chosen to be evaluated are:
-\begin{itemize}
+\begin{enumerate}
 \item Array
 \item Binary Tree
 \item Directed Acyclic Graph
-\end{itemize}
+\end{enumerate}
 
-
-
-\section{Construction of Datatypes}
-\subsection{Array}
+\subsection{Construction of Datatypes}
+\subsubsection{Array}
 The abstract datatype \emph{array} ressembles the description of 
 how a spreadsheet is defined. However, when looking at the problem 
 description, it became obvious that the physical datatype array was 
@@ -180,45 +194,45 @@ be done through the complex datatype \textit{struct} linked with
 \textit{table} implemented as described above is available on the course
 web page \cite{datatypes}.
 
-In this construction, rows are accessed directly through the array
-index and columns by looking up the value associated to the key that
-represents the column number (the course litterature uses
-the word \textit{argument} instead of \textit{key}\cite{janlert2000}). 
+In this construction, columns are accessed directly through the array
+index and rows by looking up the value associated to the key that
+represents the row number (the course litterature uses the term
+\textit{argument} instead of \textit{key}\cite{janlert2000}).
  
 
-\subsection{Binary trees}
+\subsubsection{Binary trees}
 \textit{Binary search trees} offer a good time complexity. Therefore
 they were also considered for construction of a table trees. 
 Here, the row index was represented in one \textit{binary tree}. The
-label of each node contains the row index and a pointer to
-another \textit{binary tree} for representing the column indices. 
-Hence, for each node of the row tree, there is an additional column
-\textit{binary tree}. The nodes in the column trees have a label that
-contains both the column index and the actual value. 
+label of each node contains the column index and a pointer to
+another \textit{binary tree} for representing the row indices. 
+Hence, for each node of the column tree, there is an additional row
+\textit{binary tree}. The nodes in the row trees have a label that
+contains both the row index and the actual value. 
 
 In C, the construction of a binary tree is by using pointers to link
-structs. An implementation according to Janlert was available through
-the course homepage \cite{datatypes}.
+\textit{structs}. An implementation according to Janlert
+\cite{janlert2000} was available through the course homepage \cite{datatypes}.
 
 
 
-\subsection{Directed Acyclic Graph and Hash Table}
+\subsubsection{Directed Acyclic Graph and Hash Table}
 When thinking about the \emph{link} or \emph{reference} feature that most
 spreadsheets make heavy use upon, a table constructed from a graph
-becomes an intersting possibility.  A directed acyclic graph or
+should be an intersting possibility.  A directed acyclic graph or
 \textit{DAG} is an n-linked structure. The nodes can be
 constructed as cells which are created dynamically on demand. In C, a
 struct would be the natural choice. Edges represent links in the
-spreadsheet. They are also created dynamically. 
+spreadsheet. They are also created dynamically, in C as pointers. 
 
 To access individual cells, a hash table with a continuous numbering
-system either along the rows or columns of the table can be
-used. Alternatively, the number to put in the hash table can be the
+system, either along the rows or columns of the table can be
+used. Alternatively, the keys for the hash table can be the
 concatenation of the spreadsheet table coordinates. In C a
 datatype \textit{hash table} is not available by default and has to be
 constructed. The underlying datatype is a table as described
 earlier. For simplicity, \emph{open hashing} with \emph{linear
-  probing} and a simple hash function such as \textit{modulo} was
+ probing} and a simple hash function such as \textit{modulo} was
 chosen \cite[p. 277]{janlert2000}. 
 
 
@@ -227,28 +241,40 @@ All data representations are evaluated seperately and later compared
 in the discussion section.
 \subsection{Time Complexity}
 \subsubsection{Array}
-Looking up values in a spreadsheet is always a composite of both row
-and column lookup. Here, the column lookup is of O(1) while the column
-lookup is of O(n). Hence, \emph{Block Lookup} in this representation
-is in the order of O(n) because of the \textit{table}. \emph{Deletion}
-of spreadsheet elements also of O(n). \emph{Searching} for values is
-rather slow as the whole data structure has to be traversed, hence,
-the time complexity is in the order of O(n).
+Looking up elements in a spreadsheet is always a composite of both row
+and column lookup. Here, the column lookup is of $O(1)$ based on array
+index access for the row while the row lookup is of $O(n)$, a
+consequence of the chosen construction of the \textit{table}
+(\textit{linked list}). Hence, \emph{Block Lookup} in this representation
+is in the order of $O(n)$. \emph{Deletion} of spreadsheet elements is
+also of $O(n)$. \emph{Searching} for values is rather slow as the whole
+data structure has to be traversed: the time complexity is in the
+order of $O(n)$.
+
+As explained earlier, it was delibarately chosen to have the vector of tables
+along the column indices such that one table contains all values for
+one column.
 
 \subsubsection{Binary Tree}
-Average value lookup in binary trees is in the order of O(log(n)),
-which is also the complexity for \emph{Block Lookup}. \emph{Deletions}
-are of the same time complexity, however, significant structural
-reshuffeling is needed when nodes close to the root have to be
-deleted. \emph{Searching} for values is this case just O(n) as all
+Average value lookup in binary trees is in the order of
+$O(log(n))$. This implementation uses two binary search tree runs in
+sequence, first for the column and then for the row index. Hence the
+complexity for \emph{Block Lookup} is also $O(log(n))$.
+
+\emph{Deletions} are of the same time complexity, however, significant 
+structural reshuffeling is needed when nodes close to the root are deleted. 
+\emph{Searching} for values is in this case just $O(n)$ as all
 nodes have to be traversed. This is because the order relation in the
-binary trees is based on their coordinate values and not on the user
-value entered in a spreadsheet cell.
+binary trees is based on their spreadsheet coordinates and not on the user
+value entered in spreadsheet elements.
+
+
+
 
 \subsubsection{Direced Acyclic Graph (DAG) with Hash Table}
-Lookup speeds in a \textit{hashtable} are in the order of O(1) which
+Lookup speeds in a \textit{hashtable} are in the order of $O(1)$ which
 applies also to \emph{Block Lookup} speed. The same is true for
-\emph{Deletions}. \emph{Searching} is on an avarage O(n) as all stored values
+\emph{Deletions}. \emph{Searching} is on an avarage $O(n)$ as all stored values
 have to be looked up. This is a consquence of the fact that we are
 hashing for spreadsheet coordinates and not spreadsheet element user
 values. The fact that the whole structure is implemented as a DAG has
@@ -258,9 +284,11 @@ no inflence on the time complexity here.
 \subsubsection{Array}
 Implementing a spreadsheet using \textit{array} as data representation
 is straight forward as a spreadsheet basically is an array. In the
-current case the array needs to be constructed from a vector of
+present case the array needs to be constructed from a vector of
 tables, but these are still rather simple datatypes and they are all
 available on the course homepage.
+
+
 
 \subsubsection{Binary Tree}
 Building the basic structure of the \textit{binary tree}
@@ -269,15 +297,59 @@ types are available on the course homepage. However, the whole
 representation feels less intuitive because a tree does not really
 ressembles a spreadsheet.
 
+
+
 \subsubsection{Directed Acyclic Graph (DAG) with Hash Table}
 The DAG purely as structure is simple to implement: The individual
 nodes are basically a dynamic resource that is allocated when needed
 and removed on deletion. However, implementing a hash table in C is
 certainly not trivial and will require a fair amount of work. 
 
+\subsection{Memory Efficency}
+\subsubsection{Array}
+The described array representation for a spreadsheet is quite memory
+efficient. One dimension, in the current case, the column index vector
+is static chosen to be static. while the tables for the row indices
+and the corresponding user values are created dynamically on demand
+during the user session.  
+
+\subsubsection{Binary Tree}
+The whole representation is dynamically created during the user
+session and holds in both dimensions just elements for used row and
+column indices. As such, this representation is very memory efficient.
+
+
+\subsubsection{Directed Acyclic Graph (DAG) with Hash Table}
+The amount of memory used depends on the chosen size for the hash
+table. If it is chosen large enough to cover post possible use cases,
+the overhead is rather big. A smaller, more memory efficient hash
+table will require more advanced algorithms, for example for rehashing
+in case the current hashtable fills above a certain fill ratio. 
+
+
 \section{Discussion}
 And our results looked like this...
-
+\begin{table}[]
+\centering
+\caption{My caption}
+\label{my-label}
+\begin{tabular}{llccc}
+                       &              & Array      & Binary Tree  &
+                       DAG /Hash Table \\ \hline
+Time Complexity        &              &            &              &
+\\
+                       & Block Lookup & slow       & fast         &
+                       very fast       \\
+                       & Deletion     & fast       & fast         &
+                       very fast       \\
+                       & Value Search & slow       & slow         &
+                       slow            \\
+Ease of Implementation &              & simple     & intermediate &
+rather advanced \\
+Space Complexity       &              & quite good & very good    &
+rather low     
+\end{tabular}
+\end{table}
 
 \addcontentsline{toc}{section}{\refname}
 \bibliography{references}
