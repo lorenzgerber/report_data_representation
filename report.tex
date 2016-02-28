@@ -93,21 +93,15 @@ table elements, hence the table is said to have a low \emph{fill
  ratio}. This is the main reason why the potential data structure
 should only store non-empty elements.
 
-Another important property of a spreadsheet program is that the data
+Another property of a spreadsheet program is that the data
 structure is represented in the graphical user interface. Due to the
 size, there will usually just one part of the data be visible, hence
 blockwise value lookup for scrolling over the data table is a very
-common operation.
-
-Spreadsheets are often used to prepare sorted lists. Hence
-rearranging the order of whole rows or columns is another operation of
-high importance.
-
-When spreadsheets are used for calculation purposes, extensive linking
-between memeber elements of the spreadsheet is common. Links are
-either between two elements, much in the style of a pointer, but then
-can also be many elements to one cell, in the case of functions, such
-as calculating the sum of multiple cells.
+common operation. Spreadsheets are often used to prepare sorted
+lists. Hence rearranging the order of whole rows or columns is another
+operation of importance. When spreadsheets are used for calculation
+purposes, extensive linking between memeber elements of the
+spreadsheet is common.
 
 
 \subsection{Chosen Criteria}
@@ -128,9 +122,8 @@ The chosen operations of interest are given below:
   will usally be applied when the user scrolls or jumps to another
   place in the spreadsheet. If row/column wise scrolling is assumed,
   typicall lookup sizes would be around 10 to 50. 
-\item Link following - Lookup of links as used in functions. 
 \item Deletion - Deleting elements of the spreadsheet.
-\item Traversal - Traversing the data structure to search for a value
+\item Element Search - Traversing the data structure to search for a value
 \end{itemize}
 
 \subsubsection{Ease of Implementation}
@@ -179,30 +172,108 @@ length for the row dimension. This seems to be an accepted choice:
 applications on the market, has for example a row/column limitation of
 1'048'576/16'384 \cite{excel_limit}.
 
-There is no physical datatype table in C. In this case construction
-from a dynamic datatype such as linked list seems to be reasonable. As
-there is also no physical datatype List in C, the construction could
-be done through the complex data type struct linked with pointers. An
-example of the datatypes list and table implemented in such a way can
-be found on the course web page. 
+There is no physical datatype \textit{table} in C. In this case construction
+from a dynamic datatype such as \textit{linked list} seems to be reasonable. As
+there is also no physical datatype \textit{list} in C, the construction could
+be done through the complex datatype \textit{struct} linked with
+\textit{pointers}. An example of the datatypes \textit{list} and
+\textit{table} implemented as described above is available on the course
+web page \cite{datatypes}.
+
+In this construction, rows are accessed directly through the array
+index and columns by looking up the value associated to the key that
+represents the column number (the course litterature uses
+the word \textit{argument} instead of \textit{key}\cite{janlert2000}). 
  
 
 \subsection{Binary trees}
-Binary search trees offer a good time complexity. A table can be
-implemented as one tree for the rows and multiple trees for the
-columns in each row. 
+\textit{Binary search trees} offer a good time complexity. Therefore
+they were also considered for construction of a table trees. 
+Here, the row index was represented in one \textit{binary tree}. The
+label of each node contains the row index and a pointer to
+another \textit{binary tree} for representing the column indices. 
+Hence, for each node of the row tree, there is an additional column
+\textit{binary tree}. The nodes in the column trees have a label that
+contains both the column index and the actual value. 
+
+In C, the construction of a binary tree is by using pointers to link
+structs. An implementation according to Janlert was available through
+the course homepage \cite{datatypes}.
+
+
 
 \subsection{Directed Acyclic Graph and Hash Table}
-A directed graph is an n-linked structure. The nodes can be
-constructed as cells. The cells are created dynamically on demand. 
-Edges represent links in the spreadsheet. They are also created 
-dynamically. Direct access to individual nodes can be achieved by a hash
-table. 
+When thinking about the \emph{link} or \emph{reference} feature that most
+spreadsheets make heavy use upon, a table constructed from a graph
+becomes an intersting possibility.  A directed acyclic graph or
+\textit{DAG} is an n-linked structure. The nodes can be
+constructed as cells which are created dynamically on demand. In C, a
+struct would be the natural choice. Edges represent links in the
+spreadsheet. They are also created dynamically. 
 
- 
+To access individual cells, a hash table with a continuous numbering
+system either along the rows or columns of the table can be
+used. Alternatively, the number to put in the hash table can be the
+concatenation of the spreadsheet table coordinates. In C a
+datatype \textit{hash table} is not available by default and has to be
+constructed. The underlying datatype is a table as described
+earlier. For simplicity, \emph{open hashing} with \emph{linear
+  probing} and a simple hash function such as \textit{modulo} was
+chosen \cite[p. 277]{janlert2000}. 
+
 
 \section{Evaluation of Data Representations}
+All data representations are evaluated seperately and later compared
+in the discussion section.
+\subsection{Time Complexity}
+\subsubsection{Array}
+Looking up values in a spreadsheet is always a composite of both row
+and column lookup. Here, the column lookup is of O(1) while the column
+lookup is of O(n). Hence, \emph{Block Lookup} in this representation
+is in the order of O(n) because of the \textit{table}. \emph{Deletion}
+of spreadsheet elements also of O(n). \emph{Searching} for values is
+rather slow as the whole data structure has to be traversed, hence,
+the time complexity is in the order of O(n).
 
+\subsubsection{Binary Tree}
+Average value lookup in binary trees is in the order of O(log(n)),
+which is also the complexity for \emph{Block Lookup}. \emph{Deletions}
+are of the same time complexity, however, significant structural
+reshuffeling is needed when nodes close to the root have to be
+deleted. \emph{Searching} for values is this case just O(n) as all
+nodes have to be traversed. This is because the order relation in the
+binary trees is based on their coordinate values and not on the user
+value entered in a spreadsheet cell.
+
+\subsubsection{Direced Acyclic Graph (DAG) with Hash Table}
+Lookup speeds in a \textit{hashtable} are in the order of O(1) which
+applies also to \emph{Block Lookup} speed. The same is true for
+\emph{Deletions}. \emph{Searching} is on an avarage O(n) as all stored values
+have to be looked up. This is a consquence of the fact that we are
+hashing for spreadsheet coordinates and not spreadsheet element user
+values. The fact that the whole structure is implemented as a DAG has
+no inflence on the time complexity here. 
+
+\subsection{Ease of Implementation}
+\subsubsection{Array}
+Implementing a spreadsheet using \textit{array} as data representation
+is straight forward as a spreadsheet basically is an array. In the
+current case the array needs to be constructed from a vector of
+tables, but these are still rather simple datatypes and they are all
+available on the course homepage.
+
+\subsubsection{Binary Tree}
+Building the basic structure of the \textit{binary tree}
+implementation is also rather simple as the underlying data
+types are available on the course homepage. However, the whole
+representation feels less intuitive because a tree does not really
+ressembles a spreadsheet.
+
+\subsubsection{Directed Acyclic Graph (DAG) with Hash Table}
+The DAG purely as structure is simple to implement: The individual
+nodes are basically a dynamic resource that is allocated when needed
+and removed on deletion. However, implementing a hash table in C is
+certainly not trivial and will require a fair amount of work. 
 
 \section{Discussion}
 And our results looked like this...
