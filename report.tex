@@ -104,19 +104,25 @@ or operations, this should be kept in mind for the implementation.
 
 \subsection{The datatype Spreadsheet}
 As a consequence of the above considerations the interface of the
-hypothetical datatype \textit{spreadsheet} can be described as following:
+hypothetical datatype \textit{spreadsheet} needs a basic set of
+operations shown in listing \ref{ls:operations}. 
 
+\begin{listing}
 \begin{verbatim}
-new() -> s
-isEmpty(s,xy) -> bool
+create(xy) -> s
+HasValue(s,xy) -> bool
 set(s,xy, v) -> s
-get(s,xy) -> v
+inspect-value(s,xy) -> v
 remove(s, xy) -> s
 \end{verbatim}
+\caption{\textit{shows the most basic operations that the data
+  representation of a spreadsheet needs to implement \label{ls:operations}}}
+\end{listing}
 
-The most significant difference to a standard array is that values can
-be empty and also removed. Further does \textit{spreadsheet} support
-storing user values of multiple datatypes in the same array. 
+The most significant difference to a standard array as shown in
+Janlert \cite[pp. 92-95]{janlert2000} is the non existance of $low$ or
+$high$ operations. This is the consequence of the requirement that the
+spresheet is of infinite size. 
 
 
 
@@ -149,9 +155,7 @@ During OU2 discussion, it was agreed that a lower complexity
 of the implementation is generally desirable as it decreases the
 susceptibility for bugs and code maintenance. How complex a certain
 datatype is to implement is not an objective measure. The presented
-evaluation is based on the limited experience of the author. 
-
-
+evaluation is based on the authors' currentl experience level. 
 
 
 \subsection{Memory efficency}
@@ -169,6 +173,16 @@ evaluated in more depth.
 \item Binary Tree
 \item Directed Acyclic Graph
 \end{enumerate}
+
+Array was chosen as there was a description in the course litterature
+about implementation of a sparse matrix \cite{janlert2000}. The binary
+tree was chosen after deciding that time complexity was the maybe most
+critical criteria in the data representation and that binary search
+trees offer a very good time complexity. Finally, Directed Acyclic (DAG)
+Graphs were chosen after having found indications on the web, that
+DAGs are a common way how industry standard spreadsheets are
+implemented \cite{spreadsheet1}\cite{spreadsheet2}\cite{spreadsheet3}.   
+
 
 \subsection{Construction of Datatypes}
 \subsubsection{Array}
@@ -288,28 +302,43 @@ present case the array needs to be constructed from a vector of
 tables, but these are still rather simple datatypes and they are all
 available on the course homepage.
 
+Implementing the operations stated in listing \ref{ls:operations}
+is also straight forward: column access is directly by indexing and
+the table uses a \textit{lookup} operation. If the table is
+constructed from a linked list, this will result in a list traversal. 
+
 
 
 \subsubsection{Binary Tree}
 Building the basic structure of the \textit{binary tree}
-implementation is also rather simple as the underlying data
+implementation is rather simple as the underlying data
 types are available on the course homepage. However, the whole
 representation feels less intuitive because a tree does not really
-ressembles a spreadsheet.
-
+ressembles a spreadsheet. A binary tree has a very rich set of
+operations. Mapping the spreadsheet interface to the binary tree is
+certainly possible but a concise treatment of this issue would go
+beyond the current report.
 
 
 \subsubsection{Directed Acyclic Graph (DAG) with Hash Table}
 The DAG purely as structure is simple to implement: The individual
 nodes are basically a dynamic resource that is allocated when needed
 and removed on deletion. However, implementing a hash table in C is
-certainly not trivial and will require a fair amount of work. 
+certainly not trivial and will require a fair amount of work. Also a
+number of design choices have to be take such as whether \textit{open}
+or \textit{closed} hashing shall be used. Here, the possibilites start
+to fan out such that a concise treatement of the topic would be beyond
+the scope of this report. Generally, it can be said that hash tables
+offer superior time complexity. But for real world application, they
+often have to be adapted for more balanced characteristics between
+time and space complecity. Hence this will increase the complexity for
+implementation.
 
 \subsection{Memory Efficency}
 \subsubsection{Array}
 The described array representation for a spreadsheet is quite memory
-efficient. One dimension, in the current case, the column index vector
-is static chosen to be static. while the tables for the row indices
+efficient. One dimension, in the current case the column index vector,
+is chosen to be static. while the tables for the row indices
 and the corresponding user values are created dynamically on demand
 during the user session.  
 
@@ -328,11 +357,72 @@ in case the current hashtable fills above a certain fill ratio.
 
 
 \section{Discussion}
-And our results looked like this...
+\subsection{Comparison of the different representations}
+Results from evaluating the three datatypes according to the defined
+criteria are summarized in table \ref{tab:eval}. There is obvious
+clear winner. It seems like all three representations are feasible and
+could be chosen for a certain application envelope. Probably the
+situation would become clearar if the application envelope would be
+specified in more details than it currently is.
+
+I interpreted this exercise to be rather data structure centric and
+not so much functional. I realized this after I chose the data type
+DAG, mostly because I found it mentioned in litterture. It seems like
+the only interesting property of the DAG in the spreadsheet respect is
+for linking spreadsheet elements. While this functionality is in my
+experience very important in a `real' spreadsheet application, it was
+not really mentioned in the specifications for this exercise. As such,
+it turned out that it was more the hash table that made large impact
+for the third datatype.
+
+The hashtable turned out to be some sort of magic bullet that performs
+well in almost every respect. However, when searching the net
+and litterature about hash tables, it was found that there are quite a
+number of details that need to be decided and optimized for each
+application case. The time complexity advantage is basically bought
+with a worse space complexity. In the most simple case, the hash table
+size is static and has to be decided pre-runtime. There are certainly
+implementations described that allow `re-hashing' to adjust the hash
+table size during run time, but then the complexity of implementation
+increased considerably.
+
+After comparing the different representations, an interesting
+observation was that the array implementation with a vector of tables
+could basically serve as hash table when using `open hashing'. Hence,
+there could be a possibility to start the project with a very simple
+implementation, and later, when time complexity turns out to be an
+issue, step up to a more complex implementation on basically the same
+code basis. 
+
+The binary tree implementation seems to perform somewhere in between
+the array and the DAG/hash table. However, it feels a bit like a black
+box as the actual data structure does not ressemble much the
+underlying data. For all use cases that where envisoned, the structure
+seems to work, but the implementation does not feel to be very
+intuitive. 
+
+\subsection{Conclusions}
+
+As mentioned earlier, more details about the required functionality of
+the spreadsheet application would be needed to make a more consicise
+evaluation. My first impression was that I would probably start with a
+very simplistic implementation using the \textit{array} constructed
+through a \textit{vector} of \textit{tables}. However, after I've seen
+the code snippet in reference \cite{spreadsheet2}, I am in favour of
+the hash table combined with a DAG. I was impressed by the simplicity
+of this implementation. In fact, it seems that the initial
+work would concentrate mostly on implementing the hash table with
+links to structs that later will serve as nodes in a DAG. A
+simplistic hash table can be coded rather quick. When developing
+software, I prefer to have first a functioning framework of the whole
+application with simplistic versions of each part (could be hardcoded
+or dummy) already in place instead of perfecting individual parts
+prior to putting pieces together. 
+
 \begin{table}[]
 \centering
-\caption{My caption}
-\label{my-label}
+\caption{Evaluation of the data representations according to the chosen criteria}
+\label{tab:eval}
 \begin{tabular}{llccc}
                        &              & Array      & Binary Tree  &
                        DAG /Hash Table \\ \hline
